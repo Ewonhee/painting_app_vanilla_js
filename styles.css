@@ -1,3 +1,11 @@
+canvas{
+  width: 800px;
+  height: 800px;
+  border: 5px solid black;
+}
+
 body{
-  background-color: tomato;
+  display: flex;
+  justify-content: center; /*가운데 정렬 가로기준*/
+  align-items: center; /*가운데 정렬 수직기준*/
 }
