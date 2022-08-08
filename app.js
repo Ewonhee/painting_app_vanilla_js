@@ -1,87 +1,23 @@
 const canvas= document.querySelector("canvas");
 const ctx=canvas.getContext("2d");
-canvas.width=800;
-canvas.height=800;
-ctx.lineWidth = 2;
+const CANVAS_WIDTH =800;
+const CANVAS_HEIGHT=800;
 
-// ctx.rect(50, 50, 100, 100);
-// ctx.rect(150, 150, 100, 100);
-// ctx.rect(250, 250, 100, 100);
-// ctx.fill();
+canvas.width=CANVAS_WIDTH;
+canvas.height=CANVAS_HEIGHT;
 
-// ctx.beginPath(); //다시 시작
-// ctx.rect(350, 350, 100, 100);
-// ctx.rect(450, 450, 100, 100);
-// ctx.fillStyle="red";
-// ctx.fill();
+const lineWidth = document.getElementById("line-width");
+const color=document.getElementById("color");
+const colorOptions = Array.from(
+  document.getElementsByClassName("color-option")
+); //Htmlcollection으로 주기 때문에 배열로 바꿔야한다. 
+const modeBtn=document.getElementById("mode-btn");
+const destroyBtn= document.getElementById("destroy-btn");
+const eraserBtn=document.getElementById("eraser-btn");
 
-// ctx.moveTo(50,50);
-// ctx.lineTo(150, 50);
-// ctx.lineTo(150, 150);
-// ctx.lineTo(50, 150);
-// ctx.lineTo(50, 50); 
-// ctx.stroke();
-
-// ctx.fillRect(200-38, 200-38, 50, 200);
-// ctx.fillRect(400-38, 200-38, 50, 200);
-// ctx.fillRect(300-38, 300-38, 50, 100);
-// ctx.fillRect(200-38, 200-38, 200, 20);
-// ctx.moveTo(200, 200);
-// ctx.lineTo(325, 100);
-// ctx.lineTo(450, 200);
-// ctx.fill();
-
-// ctx.fillRect(210-38, 200-38, 15, 100);
-// ctx.fillRect(350-38, 200-38, 15, 100);
-// ctx.fillRect(260-38, 200-38, 60, 200);
-
-// ctx.arc(250, 100, 50, 0, 2*Math.PI);
-// ctx.fill();
-
-// ctx.beginPath();
-// ctx.fillStyle="white";
-// ctx.arc(260+10, 80+10, 8, Math.PI, 2*Math.PI);
-// ctx.arc(220+10, 80+10, 8, Math.PI, 2*Math.PI);
-
-// ctx.fill();
-// ctx.lineWidth=5; 
-
-// const colors =[
-
-//   "#ff3838",
-//   "#ffb8b8",
-//   "#c56cf0",
-//   "#ff9f1a",
-//   "#fff200",
-//   "#32ff7e",
-//   "#7efff5",
-//   "#18dcff",
-//   "#7d5fff",
-// ]; //색 배열
-
-// let x_point=0;
-// let y_point=0;
-
-// function onMove(event){
-//   ctx.beginPath(); 
-//   ctx.moveTo(x_point,y_point);
-//   const color=colors[Math.floor(Math.random()*colors.length)]; //색 변환
-//   ctx.strokeStyle=color;
-//   ctx.lineTo(event.offsetX, event.offsetY);
-//   ctx.stroke(); 
-// }
-
-// function onclick2(event){
-//   x_point=event.offsetX;
-//   y_point=event.offsetY;
-//   ctx.beginPath();
-//   console.log("point");
-// }
-
-// canvas.addEventListener("mousemove", onMove);
-// canvas.addEventListener("click",onclick2);
-
+ctx.lineWidth = lineWidth.value;
 let isPainting=false;
+let isFilling=false;
 
 
 function onMove(event){
@@ -99,11 +35,71 @@ function startPainting(){
 
 function cancelPainting(){
   isPainting=false;
+  ctx.beginPath(); //새로 해줘야 굵기 업데이트 됨
+}
+
+function onLineWidthChange(event){
+  console.log(event.target.value);
+  ctx.lineWidth=event.target.value;
+}
+
+function onColorChange(event){
+  ctx.strokeStyle=event.target.value;
+  ctx.fillStyle=event.target.value;
+}
+
+function onColorClick(event){
+  const colorValue = event.target.dataset.color;
+  ctx.strokeStyle=colorValue;
+  ctx.fillStyle=colorValue;
+  color.value=colorValue;
+}
+
+function onModeClick(){
+  if(isFilling){
+    isFilling=false;
+    modeBtn.innerText="Fill";
+  }
+  //if(조건문)-->ture 해야 조건성립 하지만 앞에서 false로 기본값 지정
+  else{
+    isFilling=true;
+    modeBtn.innerText="Draw";
+  }
+}
+
+function onCanvasClick(){
+  if(isFilling){
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+}
+
+// function onColorClick(event){
+//   console.dir(event.target.dataset.color);
+// }
+//콜솔로그로 컬러 연결확인하기
+
+function onDestroyClick(){
+  ctx.fillStyle="white";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
+
+function onEraserClick(){
+  ctx.strokeStyle="white";
+  isFilling=false;
+  modeBtn.innerText="Fill"
+  //드로우와 같은 개념으로 지우기도 하얀색으로 칠하는것 이기때문에 설정을한다.
 }
 
 
 //canvas.addEventListener("mousemove", onClick);
+canvas.addEventListener("click", onCanvasClick);
 canvas.addEventListener("mousemove",onMove);
 canvas.addEventListener("mousedown", startPainting);
 canvas.addEventListener("mouseup", cancelPainting);
 canvas.addEventListener("mouseleave",cancelPainting);
+lineWidth.addEventListener("change", onLineWidthChange);
+color.addEventListener("change", onColorChange);
+colorOptions.forEach((color) => color.addEventListener("click", onColorClick));//각 color 마다 이벤트리스너 추가
+modeBtn.addEventListener("click", onModeClick);
+destroyBtn.addEventListener("click",onDestroyClick);
+eraserBtn.addEventListener("click", onEraserClick);
