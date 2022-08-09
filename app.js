@@ -14,6 +14,9 @@ const colorOptions = Array.from(
 const modeBtn=document.getElementById("mode-btn");
 const destroyBtn= document.getElementById("destroy-btn");
 const eraserBtn=document.getElementById("eraser-btn");
+const fileInput = document.getElementById("file");
+const textInput = document.getElementById("text");
+const saveBtn = document.getElementById("save");
 
 ctx.lineWidth = lineWidth.value;
 let isPainting=false;
@@ -90,8 +93,36 @@ function onEraserClick(){
   //드로우와 같은 개념으로 지우기도 하얀색으로 칠하는것 이기때문에 설정을한다.
 }
 
+function onFileChange(event){
+  const file= event.target.files[0];
+  const url = URL.createObjectURL(file)
+  const image = new Image(); //<img src=""/>, 
+  image.src = url; //<script> 태그의 src 속성은 외부 스크립트 파일의 URL을 명시합니다.
+  image.onload =function(){
+    ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    fileInput.value=null;
+  }; 
+}
 
-//canvas.addEventListener("mousemove", onClick);
+function onDoubleClick(event){
+  const text = textInput.value;
+  if(text !==""){
+    ctx.save(); //기존 설정 저장
+    ctx.font="68px 'sans-serif'";
+    ctx.fillText(text, event.offsetX, event.offsetY);
+    ctx.restore();//기존 세이브 복구
+  }
+}
+
+function onSaveClick(){
+  const url =canvas.toDataURL();
+  const a =document.createElement("a");//a 태그 생성(다운로드 사용하기 위해)
+  a.href=url;
+  a.download="myDrawing.png";
+  a.click();
+}
+
+
 canvas.addEventListener("click", onCanvasClick);
 canvas.addEventListener("mousemove",onMove);
 canvas.addEventListener("mousedown", startPainting);
@@ -103,3 +134,6 @@ colorOptions.forEach((color) => color.addEventListener("click", onColorClick));/
 modeBtn.addEventListener("click", onModeClick);
 destroyBtn.addEventListener("click",onDestroyClick);
 eraserBtn.addEventListener("click", onEraserClick);
+fileInput.addEventListener("change", onFileChange);
+canvas.addEventListener("dblclick", onDoubleClick);
+saveBtn.addEventListener("click", onSaveClick);
