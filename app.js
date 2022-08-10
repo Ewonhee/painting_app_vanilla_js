@@ -17,6 +17,7 @@ const eraserBtn=document.getElementById("eraser-btn");
 const fileInput = document.getElementById("file");
 const textInput = document.getElementById("text");
 const saveBtn = document.getElementById("save");
+const fontText=document.getElementById("text2");
 
 ctx.lineWidth = lineWidth.value;
 let isPainting=false;
@@ -108,11 +109,23 @@ function onDoubleClick(event){
   const text = textInput.value;
   if(text !==""){
     ctx.save(); //기존 설정 저장
-    ctx.font="68px 'sans-serif'";
+    ctx.font="bold 48px 'monospace'";
     ctx.fillText(text, event.offsetX, event.offsetY);
     ctx.restore();//기존 세이브 복구
   }
 }
+
+
+function fontstyle(){
+  const text3=fontText.value;
+  console.log(text3);
+}
+
+// let f =new FontFace('test','url()');
+// f.load().then(function(){
+
+// }); 
+
 
 function onSaveClick(){
   const url =canvas.toDataURL();
@@ -121,6 +134,7 @@ function onSaveClick(){
   a.download="myDrawing.png";
   a.click();
 }
+
 
 
 canvas.addEventListener("click", onCanvasClick);
@@ -137,3 +151,5 @@ eraserBtn.addEventListener("click", onEraserClick);
 fileInput.addEventListener("change", onFileChange);
 canvas.addEventListener("dblclick", onDoubleClick);
 saveBtn.addEventListener("click", onSaveClick);
+//canvas.addEventListener("change",fontstyle);//함수를 실행 시켜야 콘솔로 들어감
+fontText.addEventListener("change",fontstyle);
