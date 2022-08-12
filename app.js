@@ -18,10 +18,14 @@ const fileInput = document.getElementById("file");
 const textInput = document.getElementById("text");
 const saveBtn = document.getElementById("save");
 const fontText=document.getElementById("text2");
+const fontTypes=document.getElementById("fontTypes");
+const fontWeights=document.getElementById("fontWeights");
 
 ctx.lineWidth = lineWidth.value;
+//ctx.fontsize= style.fontsize.value;
 let isPainting=false;
 let isFilling=false;
+let lacrimosa;
 
 
 function onMove(event){
@@ -45,7 +49,8 @@ function cancelPainting(){
 function onLineWidthChange(event){
   console.log(event.target.value);
   ctx.lineWidth=event.target.value;
-}
+  //ctx.fontsize=event.target.value;
+} //라인 굵기
 
 function onColorChange(event){
   ctx.strokeStyle=event.target.value;
@@ -83,8 +88,13 @@ function onCanvasClick(){
 //콜솔로그로 컬러 연결확인하기
 
 function onDestroyClick(){
-  ctx.fillStyle="white";
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  if(window.confirm("The action will be canceled")){
+    ctx.fillStyle="white";
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+  else{
+    alert("Stopped.")
+  }
 }
 
 function onEraserClick(){
@@ -107,19 +117,23 @@ function onFileChange(event){
 
 function onDoubleClick(event){
   const text = textInput.value;
+  const textFont = fontTypes.value;
+  const textWeight = fontWeights.value;
+  const textSize = lineWidth.value;
   if(text !==""){
     ctx.save(); //기존 설정 저장
-    ctx.font="bold 48px 'monospace'";
+    ctx.font = ` ${textWeight} ${textSize}px ${textFont}`;
     ctx.fillText(text, event.offsetX, event.offsetY);
+    console.log(textFont);
     ctx.restore();//기존 세이브 복구
   }
 }
 
 
-function fontstyle(){
-  const text3=fontText.value;
-  console.log(text3);
-}
+// function fontstyle(){
+//   const text3=fontText.value;
+//   ctx.font=text3;
+// }
 
 // let f =new FontFace('test','url()');
 // f.load().then(function(){
@@ -152,4 +166,4 @@ fileInput.addEventListener("change", onFileChange);
 canvas.addEventListener("dblclick", onDoubleClick);
 saveBtn.addEventListener("click", onSaveClick);
 //canvas.addEventListener("change",fontstyle);//함수를 실행 시켜야 콘솔로 들어감
-fontText.addEventListener("change",fontstyle);
+// fontText.addEventListener("change",fontstyle);
